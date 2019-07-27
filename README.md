@@ -37,11 +37,11 @@ for unix (& mac maybe) change the permission on the file:
 
 - Step 4) Play!
 
-
-
-
 #Note
 I have created all the file except for png.py , see that file for details on the license
+
+詳細使用介紹，請參見 黃聖順老師的隨便記記 
+http://smat.byethost24.com/wordpress/2019/02/13/605/
 
 2016/10/25 修正灰階模式下，黑色區域錯誤解析成白色的問題。
 
