@@ -19,7 +19,7 @@
 		<page name="General" _gui-text="General">
 
 		<!-- Titolo e descrizione -->
-			<param name="Title" type="description">Raster 2 Laser GCode generator for cr3dp 20190727</param>
+			<param name="Title" type="description">Raster 2 Laser GCode generator for cr3dp 20190929</param>
 			<param name="Description" type="description">created by 305 Engineering, revision by Smat Huang</param>
     
 		<!-- Opzioni di esportazione dell'immagine -->
@@ -107,12 +107,13 @@
 			-->
 			
 			<param name="low_laser_square" type="enum" gui-text="顯示工作區範圍 Show the working area">
-				<_item value="0">不使用</_item>	
-				<_item value="1">1次</_item>
-				<_item value="2">2次</_item>
-				<_item value="3">3次</_item>
-				<_item value="4">4次</_item>
-				<_item value="5">5次</_item>
+				<_item value="0">不使用</_item>
+				<_item value="1">定位點10秒</_item>
+				<_item value="2">定位點10秒+1次</_item>
+				<_item value="3">定位點10秒+2次</_item>
+				<_item value="4">定位點10秒+3次</_item>
+				<_item value="5">定位點10秒+4次</_item>
+				<_item value="6">定位點10秒+5次</_item>
 			</param>
 			
 			<param name="low_laser_power" type="int" min="1" max="255" gui-text="　　指示光雷射功率 Power of indicator laser">1</param>

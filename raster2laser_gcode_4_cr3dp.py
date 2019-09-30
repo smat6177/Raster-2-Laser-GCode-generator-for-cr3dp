@@ -465,7 +465,7 @@ class GcodeExport(inkex.Effect):
 			file_gcode = open(pos_file_gcode, 'w')  #Creo il file
 			
 			#Configurazioni iniziali standard Gcode
-			file_gcode.write('; Generated with:\n; "Raster 2 Laser Gcode generator for cr3dp"\n; by 305 Engineering\n; Ver:2019-07-27\n;\n')
+			file_gcode.write('; Generated with:\n; "Raster 2 Laser Gcode generator for cr3dp"\n; by 305 Engineering\n; Ver:20190929\n;\n')
 			file_gcode.write('; Resolution: ' + str(self.options.resolution) + 'pixel/mm\n' )
 			if self.options.grayscale_type == 1:
 				file_gcode.write('; Color to Grayscale conversion: 0.21R + 0.71G + 0.07B\n')
@@ -551,15 +551,15 @@ class GcodeExport(inkex.Effect):
 				#file_gcode.write(';Low_laser_dot=False\n')
 				
 			if self.options.low_laser_square > 0:
-				#file_gcode.write('M106 S4\nG4 S10; Pause\n')
-				file_gcode.write('M106 S' + str(self.options.low_laser_power) + '\nG4 S10; Pause\n') # add by smat 20190727
+				#file_gcode.write('\nM106 S4\nG4 S10; Pause\n')
+				file_gcode.write('\nM106 S' + str(self.options.low_laser_power) + '\nG4 S10; Pause at anchor point\n') # add by smat 20190727
 				
 			#if self.options.low_laser_square == True:
 				#file_gcode.write(';Low_laser_square=True\n')
 				
 			#squares = self.options.low_laser_square
-			while self.options.low_laser_square > 0:
-				file_gcode.write(';Low_laser_square='+ str(self.options.low_laser_square) + '\n')
+			while self.options.low_laser_square > 1:
+				file_gcode.write('\n;Low_laser_square='+ str(self.options.low_laser_square - 1) + '\n')
 				file_gcode.write('; Max X=' + str(w/self.options.resolution) + ' Max Y=' + str(h/self.options.resolution) + '\n')
 				file_gcode.write('G01 X' + str(w/self.options.resolution)+' Y0 F1000\n')
 				file_gcode.write('G01 X' + str(w/self.options.resolution)+' Y'+str(h/self.options.resolution)+' F1000\n')
@@ -599,6 +599,8 @@ class GcodeExport(inkex.Effect):
 										if self.options.laseron_delay > 0:
 											file_gcode.write('G04 P0\n')
 										file_gcode.write(self.options.laseroff + '\n')
+										if self.options.laseron_delay > 0:	#add by smat 20190928
+											file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 										Laser_ON = False
 									else: 
 										if matrice_BN[y][x+1] != N :
@@ -606,6 +608,8 @@ class GcodeExport(inkex.Effect):
 											if self.options.laseron_delay > 0:
 												file_gcode.write('G04 P0\n')
 											file_gcode.write(self.options.laseroff + '\n')
+											if self.options.laseron_delay > 0:	#add by smat 20190928
+												file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 											Laser_ON = False
 					else:
 						for x in reversed(range(w)):
@@ -625,6 +629,8 @@ class GcodeExport(inkex.Effect):
 										if self.options.laseron_delay > 0:
 											file_gcode.write('G04 P0\n')
 										file_gcode.write(self.options.laseroff + '\n')
+										if self.options.laseron_delay > 0:	#add by smat 20190928
+											file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 										Laser_ON = False
 									else: 
 										if matrice_BN[y][x-1] != N :
@@ -632,6 +638,8 @@ class GcodeExport(inkex.Effect):
 											if self.options.laseron_delay > 0:
 												file_gcode.write('G04 P0\n')
 											file_gcode.write(self.options.laseroff + '\n')
+											if self.options.laseron_delay > 0:	#add by smat 20190928
+												file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 											Laser_ON = False				
 
 			else: ##SCALA DI GRIGI GrayScale
@@ -652,38 +660,42 @@ class GcodeExport(inkex.Effect):
 									
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == w-1 : #controllo fine riga
-#										if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
-										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01+self.options.laser_contrast*(256-self.getLaserPowerValue(255 - matrice_BN[y][x]))) + '\n') #test by smat
-#										else:
-#											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
+										#if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
+										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01+self.options.laser_contrast*(256-self.getLaserPowerValue(255 - matrice_BN[y][x]))) + ';Break Point A1\n') #test by smat
+										#else:
+											#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
 
 										if self.options.laseron_delay > 0:	#fixed by smat 20190608
-											file_gcode.write('G04 P0\n')	##fixed by smat 20190608
+											file_gcode.write('G04 P0; w\n')	#fixed by smat 20190608
 										file_gcode.write(self.options.laseroff + '\n')
+										if self.options.laseron_delay > 0:	#fixed by smat 20190928
+											file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 										Laser_ON = False
 										
 									else: 
 										if matrice_BN[y][x+1] == B :
-#											if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
+											#if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
 											file_gcode.write('G01 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01+self.options.laser_contrast*(256-self.getLaserPowerValue(255 - matrice_BN[y][x]))) +'\n') #test by smat
-#											else:
-#												file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
+											#else:
+												#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
 											if self.options.laseron_delay > 0:	#fixed by smat 20190608
-												file_gcode.write('G04 P0\n')	#fixed by smat 20190608
+												file_gcode.write('G04 P0; B1\n')	#fixed by smat 20190608
 											file_gcode.write(self.options.laseroff + '\n')
+											if self.options.laseron_delay > 0:	#fixed by smat 20190928
+												file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 											Laser_ON = False
 											
 										elif matrice_BN[y][x] != matrice_BN[y][x+1] :
-#											if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
+											#if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
 											file_gcode.write('G01 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01+self.options.laser_contrast*(256-self.getLaserPowerValue(255 - matrice_BN[y][x]))) +'\n') #test by smat
-#											else:
-#												file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
-											if self.options.laseron_delay > 0:	#fixed by smat 20190608
-												file_gcode.write('G04 P0\n')	#fixed by smat 20190608
+											#else:
+												#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
+											#if self.options.laseron_delay > 0:	#fixed by smat 20190608
+												#file_gcode.write('G04 P0\n')	#fixed by smat 20190608
 											# file_gcode.write(self.options.laseron + ' '+ ' S' + str(255 - matrice_BN[y][x+1]) +'\n')												
 											file_gcode.write(self.options.laseron + ' '+ ' S' + str( self.getLaserPowerValue( 255 - matrice_BN[y][x+1]) ) +'\n')												
-											if self.options.laseron_delay > 0:	#fixed by smat 20190608
-												file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#fixed by smat 20190608
+											#if self.options.laseron_delay > 0:	#fixed by smat 20190608
+												#file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#fixed by smat 20190608
                                             
 
 					
@@ -703,37 +715,41 @@ class GcodeExport(inkex.Effect):
 									
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == 0 : #controllo fine riga ritorno
-#										if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
+										#if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
 										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01+self.options.laser_contrast*(256-self.getLaserPowerValue(255 - matrice_BN[y][x]))) + '\n') #test by smat
-#										else:
-#											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
+										#else:
+											#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
 										if self.options.laseron_delay > 0:	#fixed by smat 20190608
-											file_gcode.write('G04 P0\n')	#fixed by smat 20190608
+											file_gcode.write('G04 P0; x==0\n')	#fixed by smat 20190608
 										file_gcode.write(self.options.laseroff + '\n')
+										if self.options.laseron_delay > 0:	#fixed by smat 20190928
+											file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 										Laser_ON = False
 										
 									else: 
 										if matrice_BN[y][x-1] == B :
-#											if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
+											#if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
 											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01+self.options.laser_contrast*(256-self.getLaserPowerValue(255 - matrice_BN[y][x]))) + '\n') #test by smat
-#											else:
-#												file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
+											#else:
+												#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
 											if self.options.laseron_delay > 0:	#fixed by smat 20190608
-												file_gcode.write('G04 P0\n')	#fixed by smat 20190608
+												file_gcode.write('G04 P0; B2\n')	#fixed by smat 20190608
 											file_gcode.write(self.options.laseroff + '\n')
+											if self.options.laseron_delay > 0:	#fixed by smat 20190928
+												file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#add by smat 20190928
 											Laser_ON = False
 											
 										elif  matrice_BN[y][x] != matrice_BN[y][x-1] :
-#											if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
+											#if matrice_BN[y][x] < (255-self.options.grayscale_resolution):
 											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01+self.options.laser_contrast*(256-self.getLaserPowerValue(255 - matrice_BN[y][x]))) +'\n') #test by smat
-#											else:
-#												file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
-											if self.options.laseron_delay > 0:	#fixed by smat 20190608
-												file_gcode.write('G04 P0\n')	#fixed by smat 20190608
+											#else:
+												#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G00) + '\n') 
+											#if self.options.laseron_delay > 0:	#fixed by smat 20190608
+												#file_gcode.write('G04 P0\n')	#fixed by smat 20190608
 											# file_gcode.write(self.options.laseron + ' '+ ' S' + str(255 - matrice_BN[y][x-1]) +'\n')
 											file_gcode.write(self.options.laseron + ' '+ ' S' + str( self.getLaserPowerValue( 255 - matrice_BN[y][x-1]) ) +'\n')
-											if self.options.laseron_delay > 0:	#fixed by smat 20190608
-												file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#fixed by smat 20190608
+											#if self.options.laseron_delay > 0:	#fixed by smat 20190608
+												#file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')	#fixed by smat 20190608
 
 			
 			
