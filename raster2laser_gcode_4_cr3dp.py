@@ -510,7 +510,7 @@ class GcodeExport(inkex.Effect):
 				file_gcode.write('; Grayscale_resolution: Gray_8\n')
 			else:
 				file_gcode.write('; Grayscale_resolution: Gray\n')
-			file_gcode.write(';Laser Max Power =' + self.options.laser_max_power + '\n') # add by smat 20191005
+			file_gcode.write(';Laser Max Power =' + str(self.options.laser_max_power) + '\n') # add by smat 20191005
 			file_gcode.write(';\n;\n')
 			file_gcode.write(self.options.laseroff + '\n') # add by smat
 			file_gcode.write('M107 ;Laser Off at the start\n') # add by smat 20190624
@@ -591,7 +591,7 @@ class GcodeExport(inkex.Effect):
 									if self.options.laseron_delay > 0:
 										file_gcode.write('G04 P0\n')
 									#file_gcode.write(self.options.laseron + '\n')	
-									file_gcode.write(self.options.laseron + ' S' + self.options.laser_max_power + '\n') #Fixed by smat 20191005
+									file_gcode.write(self.options.laseron + ' S' + str(self.options.laser_max_power) + '\n') #Fixed by smat 20191005
 									
 									if self.options.laseron_delay > 0:
 										file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')
@@ -623,7 +623,7 @@ class GcodeExport(inkex.Effect):
 									if self.options.laseron_delay > 0:
 										file_gcode.write('G04 P0\n')
 									#file_gcode.write(self.options.laseron + '\n')	
-									file_gcode.write(self.options.laseron + ' S' + self.options.laser_max_power + '\n') #Fixed by smat 20191005
+									file_gcode.write(self.options.laseron + ' S' + str(self.options.laser_max_power) + '\n') #Fixed by smat 20191005
 									if self.options.laseron_delay > 0:
 										file_gcode.write('G04 P' + str(self.options.laseron_delay) + '\n')
 									Laser_ON = True
