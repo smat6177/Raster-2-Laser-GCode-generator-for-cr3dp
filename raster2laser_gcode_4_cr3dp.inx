@@ -19,7 +19,7 @@
 		<page name="General" _gui-text="General">
 
 		<!-- Titolo e descrizione -->
-			<param name="Title" type="description">Raster 2 Laser GCode generator for cr3dp 20191005</param>
+			<param name="Title" type="description">Raster 2 Laser GCode generator for cr3dp Ver:20191020</param>
 			<param name="Description" type="description">created by 305 Engineering, revision by Smat Huang</param>
     
 		<!-- Opzioni di esportazione dell'immagine -->

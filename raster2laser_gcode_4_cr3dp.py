@@ -465,7 +465,7 @@ class GcodeExport(inkex.Effect):
 			file_gcode = open(pos_file_gcode, 'w')  #Creo il file
 			
 			#Configurazioni iniziali standard Gcode
-			file_gcode.write('; Generated with:\n; "Raster 2 Laser Gcode generator for cr3dp"\n; by 305 Engineering\n; Ver:20191005\n;\n')
+			file_gcode.write('; Generated with: Raster 2 Laser Gcode generator for cr3dp\n; by 305 Engineering\n; Ver:20191020\n;\n')
 			file_gcode.write('; Resolution: ' + str(self.options.resolution) + 'pixel/mm\n' )
 			if self.options.grayscale_type == 1:
 				file_gcode.write('; Color to Grayscale conversion: 0.21R + 0.71G + 0.07B\n')
@@ -553,7 +553,13 @@ class GcodeExport(inkex.Effect):
 				
 			if self.options.low_laser_square > 0:
 				#file_gcode.write('\nM106 S4\nG4 S10; Pause\n')
-				file_gcode.write('\nM106 S' + str(self.options.low_laser_power) + '\nG4 S10; Pause at anchor point\n') # add by smat 20190727
+				#file_gcode.write('\nM106 S' + str(self.options.low_laser_power) + '\nG4 S10; Pause at anchor point\n') # add by smat 20190727
+				file_gcode.write('; Pause at anchor point\n') # add by smat 20191019
+				count_time = 10 # add by smat 20191019
+				while count_time > 0: # add by smat 20191019
+					file_gcode.write(self.options.laseron + ' S' + str(self.options.low_laser_power) + '\nG4 P500\n') # add by smat 20191019
+					file_gcode.write(self.options.laseroff + '\nG4 P500\n') # add by smat 20191019
+					count_time -= 1 # add by smat 20191019
 				
 			#if self.options.low_laser_square == True:
 				#file_gcode.write(';Low_laser_square=True\n')
@@ -562,11 +568,17 @@ class GcodeExport(inkex.Effect):
 			while self.options.low_laser_square > 1:
 				file_gcode.write('\n;Low_laser_square='+ str(self.options.low_laser_square - 1) + '\n')
 				file_gcode.write('; Max X=' + str(w/self.options.resolution) + ' Max Y=' + str(h/self.options.resolution) + '\n')
+				file_gcode.write(self.options.laseron + ' S' + str(self.options.low_laser_power) + '\n') # add by smat 20191019
 				file_gcode.write('G01 X' + str(w/self.options.resolution)+' Y0 F1000\n')
 				file_gcode.write('G01 X' + str(w/self.options.resolution)+' Y'+str(h/self.options.resolution)+' F1000\n')
 				file_gcode.write('G01 X0 Y'+str(h/self.options.resolution)+' F1000\n')
 				file_gcode.write('G01 X0 Y0 F1000\n')
-				file_gcode.write('G4 S3; Pause\n')
+				#file_gcode.write('G4 S3; Pause\n')
+				count_time = 3 # add by smat 20191020
+				while count_time > 0: # add by smat 20191020
+					file_gcode.write(self.options.laseron + ' S' + str(self.options.low_laser_power) + '\nG4 P500\n') # add by smat 20191020
+					file_gcode.write(self.options.laseroff + '\nG4 P500\n') # add by smat 20191020
+					count_time -= 1	# add by smat 20191020
 				self.options.low_laser_square -= 1
 			#else:
 				#file_gcode.write(';Low_laser_square=False\n')
